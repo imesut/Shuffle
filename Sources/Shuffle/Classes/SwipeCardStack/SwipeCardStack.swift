@@ -301,16 +301,21 @@ open class SwipeCardStack: UIView, SwipeCardDelegate, UIGestureRecognizerDelegat
   }
 
   func reloadVisibleCards() {
-    visibleCards.forEach { $0.card.removeFromSuperview() }
+    visibleCards.forEach {
+      $0.card.swipeDirections = []
+      $0.card.removeFromSuperview()
+    }
     visibleCards.removeAll()
+    cardContainer.subviews.forEach { $0.removeFromSuperview() }
 
     let numberOfCards = min(stateManager.remainingIndices.count, numberOfVisibleCards)
     for position in 0..<numberOfCards {
       let index = stateManager.remainingIndices[position]
       if let card = loadCard(at: index) {
-        insertCard(Card(index: index, card: card), at: position)
+        self.insertCard(Card(index: index, card: card), at: position)
       }
     }
+    isAnimating = false
   }
 
   func insertCard(_ value: Card, at position: Int) {
